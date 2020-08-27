@@ -1,0 +1,13 @@
+[submodule "FastNoise2/FastNoise2"]
+	path = FastNoise2/FastNoise2
+	url = https://github.com/Auburn/FastNoise2.git
+[submodule "FastNoise/FastNoise"]
+	path = FastNoise/FastNoise
+	url = https://github.com/Auburn/FastNoise.git
+[submodule "FastNoiseSIMD/FastNoiseSIMD"]
+	path = FastNoiseSIMD/FastNoiseSIMD
+	url = https://github.com/Auburn/FastNoiseSIMD.git
+[submodule "FastNoiseLite/FastNoiseLite"]
+	path = FastNoiseLite/FastNoiseLite
+	url = https://github.com/Auburn/FastNoise.git
+	branch = FastNoiseLite
