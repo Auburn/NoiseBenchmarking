@@ -11,3 +11,6 @@
 	path = FastNoiseLite/FastNoiseLite
 	url = https://github.com/Auburn/FastNoise.git
 	branch = FastNoiseLite
+[submodule "benchmark"]
+	path = benchmark
+	url = https://github.com/google/benchmark.git

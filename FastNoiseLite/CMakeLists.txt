@@ -1,0 +1,3 @@
+
+add_library(BenchFastNoiseLite
+	Benchmark_FastNoiseLite.cpp)

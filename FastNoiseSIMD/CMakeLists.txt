@@ -1,0 +1,3 @@
+
+add_library(BenchFastNoiseSIMD
+	Benchmark_FastNoiseSIMD.cpp)
