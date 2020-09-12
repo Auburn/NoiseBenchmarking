@@ -26,7 +26,8 @@ endif()
 set(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "" FORCE)
 add_subdirectory(benchmark)
 
-include_directories(.)
+add_subdirectory(NoiseBenchmarkInterface)
+include_directories(NoiseBenchmarkInterface)
 
 add_subdirectory(FastNoise)
 # add_subdirectory(FastNoise2)
@@ -38,6 +39,7 @@ add_executable(NoiseBenchmarking
     
 target_link_libraries(NoiseBenchmarking
     benchmark::benchmark
+    NoiseBenchmarkInterface
 )
 
 add_dependencies(NoiseBenchmarking

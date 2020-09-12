@@ -4,6 +4,6 @@ add_library(BenchFastNoise SHARED
     FastNoise/FastNoise.cpp)
     
 target_link_libraries(BenchFastNoise PRIVATE
-    benchmark::benchmark)
+    NoiseBenchmarkInterface)
 
 target_include_directories(BenchFastNoise PRIVATE FastNoise)

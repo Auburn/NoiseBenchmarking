@@ -13,72 +13,11 @@ namespace fs = std::filesystem;
 #include <dlfcn.h>
 #endif
 
-#define DLL_EXPORT
 #include <NoiseBenchmarkInterface.h>
 
-std::vector<NoiseBenchmarkInterface*> NoiseBenchmarkInterfaces;
-
-void RegisterNoiseBenchmarkInterface( NoiseBenchmarkInterface* p )
+void LoadDynamicLibs()
 {
-    NoiseBenchmarkInterfaces.push_back( p );
-}
-
-bool LoadDynamicLibs()
-{
-    std::string libPath( "." );
-
-    if( libPath.empty() )
-    {//find where we are loaded from and look in that directory
-        libPath = "./";
-#if defined(_WIN32) || defined(_WIN64)
-        HMODULE hModule = NULL;
-
-        if( GetModuleHandleEx( GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
-            GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
-            (LPCSTR)&LoadDynamicLibs, &hModule ) )
-        {
-            char path[MAX_PATH];
-
-            if( GetModuleFileName( hModule, path, sizeof( path ) ) > 0 )
-            {
-                fs::path imagePath( path );
-                libPath = imagePath.parent_path().string();
-            }
-        }
-#elif defined(__APPLE__)
-#ifdef NDEBUG
-        std::string libName = "libhastyNoise";
-#else
-        std::string libName = "libhastyNoised";
-#endif
-        uint32_t dyldCount = _dyld_image_count();
-
-        for( uint32_t i = 0; i < dyldCount; ++i )
-        {
-            const char* dyldImageName = _dyld_get_image_name( i );
-
-            if( dyldImageName == NULL )
-                continue;
-
-            fs::path imagePath( dyldImageName );
-
-            if( imagePath.stem() == libName )
-            {
-                libPath = imagePath.parent_path().string();
-                break;
-            }
-        }
-#elif defined( __linux__)
-        dl_iterate_phdr( phdr_callback, &libPath );
-#else
-        static_assert(false);
-#endif
-    }
-
-    fs::path directory( libPath );
-
-    if( !fs::exists( directory ) || !fs::is_directory( directory ) )
-        return false;
+    fs::path directory( "." );
 
     std::string libExtension;
     std::string libPrefix = "Bench";
@@ -167,31 +106,49 @@ bool LoadDynamicLibs()
 
         ++iter;
     }
-
-    return true;
 }
 
 int main( int argc, char** argv )
 {
+    benchmark::Initialize( &argc, argv );
+    if( benchmark::ReportUnrecognizedArguments( argc, argv ) ) { return 1; }
+
     LoadDynamicLibs();
 
-    for( size_t dimensions = 2; dimensions <= 2; dimensions++ )
-    {
-        for( auto noiseType = (NoiseBenchmarkInterface::NoiseType)0;
-             noiseType < NoiseBenchmarkInterface::NoiseType::EnumMax;
-             noiseType = (NoiseBenchmarkInterface::NoiseType)((int)noiseType + 1) )
-        {
-            for( NoiseBenchmarkInterface* noiseBenchmarkInterface : NoiseBenchmarkInterfaces )
-            {
-                std::string benchName = noiseBenchmarkInterface->FormatBenchmarkName( noiseType, dimensions );
+    int64_t dimensionSize2D = 512;
+    int64_t dimensionSize3D = 64;
 
-                noiseBenchmarkInterface->RegisterBenchmark2D( benchName.c_str(), noiseType, dimensions );
+    for( auto noiseType = (NoiseBenchmarkInterface::NoiseType)0;
+        noiseType < NoiseBenchmarkInterface::NoiseType::EnumMax;
+        noiseType = (NoiseBenchmarkInterface::NoiseType)((int)noiseType + 1) )
+    {
+        for( size_t dimensionCount = 2; dimensionCount <= 3; dimensionCount++ )
+        {
+            for( NoiseBenchmarkInterface* noiseBenchmarkInterface : GetNoiseBenchmarkInterfaces() )
+            {
+                std::string benchName = noiseBenchmarkInterface->FormatBenchmarkName( noiseType, dimensionCount );
+
+                if( dimensionCount == 2 )
+                {
+                    benchmark::RegisterBenchmark( benchName.c_str(), [noiseBenchmarkInterface, noiseType, dimensionSize2D]( benchmark::State& state )
+                        {
+                            noiseBenchmarkInterface->Benchmark2D( state, noiseType, dimensionSize2D );
+                        } );
+                }
+                else if( dimensionCount == 3 )
+                {
+                    benchmark::RegisterBenchmark( benchName.c_str(), [noiseBenchmarkInterface, noiseType, dimensionSize3D]( benchmark::State& state )
+                        {
+                            noiseBenchmarkInterface->Benchmark3D( state, noiseType, dimensionSize3D );
+                        } );
+                }
             }
         }
     }
 
     benchmark::RunSpecifiedBenchmarks();
 
+    std::cout << "Benchmarks Complete!";
     getchar();
 
     return 0;

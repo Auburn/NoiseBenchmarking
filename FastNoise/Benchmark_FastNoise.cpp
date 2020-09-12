@@ -1,40 +1,16 @@
 #include <NoiseBenchmarkInterface.h>
 #include <FastNoise.h>
 
-class NoiseBenchmark_FastNoise : public NoiseBenchmarkInterface
+class NoiseBenchmark_FastNoise : public RegisteredNoiseBenchmarkInterface<NoiseBenchmark_FastNoise>
 {
 public:
-    NoiseBenchmark_FastNoise() : NoiseBenchmarkInterface( "FastNoise" )
+    NoiseBenchmark_FastNoise() : RegisteredNoiseBenchmarkInterface( "FastNoise" )
     {
      //   *(int*)0 = 1;
     }
 
-    benchmark::internal::Benchmark* RegisterBenchmark2D( const char* benchName, NoiseType noiseType, size_t dimensionSize ) final
+    bool SetupNoise( benchmark::State& state, FastNoise& fastnoise, NoiseType noiseType )
     {
-        auto bench = [dimensionSize]( benchmark::State& state, FastNoise fastnoise )
-        {
-            size_t itemIncrement = dimensionSize * dimensionSize;
-            size_t itemCount = 0;
-
-            for( auto _ : state )
-            {
-                (void)_;
-
-                for( size_t y = 0; y < dimensionSize; y++ )
-                {
-                    for( size_t x = 0; x < dimensionSize; x++ )
-                    {
-                        benchmark::DoNotOptimize( fastnoise.GetNoise( (float)x, (float)y ) );
-                    }
-                }
-
-                itemCount += itemIncrement;
-            }
-
-            state.SetItemsProcessed( itemCount );
-        };
-
-        FastNoise fastnoise;
         fastnoise.SetCellularReturnType( FastNoise::Distance );
         fastnoise.SetCellularDistanceFunction( FastNoise::Euclidean );
 
@@ -45,11 +21,67 @@ public:
         case NoiseType::Simplex: fastnoise.SetNoiseType( FastNoise::Simplex ); break;
         case NoiseType::Cellular: fastnoise.SetNoiseType( FastNoise::Cellular ); break;
         case NoiseType::Cubic: fastnoise.SetNoiseType( FastNoise::Cubic ); break;
-        default: return nullptr;
+        default: state.SkipWithError( "NoiseType not supported" ); return false;
+        }
+        return true;
+    }
+
+    bool Benchmark2D( benchmark::State& state, NoiseType noiseType, size_t dimensionSize ) final
+    {
+        FastNoise fastnoise;
+        if( !SetupNoise( state, fastnoise, noiseType ) ) return false;
+
+        int64_t itemIncrement = dimensionSize * dimensionSize;
+        int64_t itemCount = 0;
+
+        for( auto _ : state )
+        {
+            (void)_;
+
+            for( size_t y = 0; y < dimensionSize; y++ )
+            {
+                for( size_t x = 0; x < dimensionSize; x++ )
+                {
+                    benchmark::DoNotOptimize( fastnoise.GetNoise( (float)x, (float)y ) );
+                }
+            }
+
+            itemCount += itemIncrement;
         }
 
-        return benchmark::RegisterBenchmark( benchName, bench, fastnoise );
+        state.SetItemsProcessed( itemCount );
+
+        return true;
+    }
+
+    bool Benchmark3D( benchmark::State& state, NoiseType noiseType, size_t dimensionSize ) final
+    {
+        FastNoise fastnoise;
+        if( !SetupNoise( state, fastnoise, noiseType ) ) return false;
+
+        int64_t itemIncrement = dimensionSize * dimensionSize;
+        int64_t itemCount = 0;
+
+        for( auto _ : state )
+        {
+            (void)_;
+
+            for( size_t z = 0; z < dimensionSize; z++ )
+            {
+                for( size_t y = 0; y < dimensionSize; y++ )
+                {
+                    for( size_t x = 0; x < dimensionSize; x++ )
+                    {
+                        benchmark::DoNotOptimize( fastnoise.GetNoise( (float)x, (float)y, (float)z ) );
+                    }
+                }
+            }
+
+            itemCount += itemIncrement;
+        }
+
+        state.SetItemsProcessed( itemCount );
+
+        return true;
     }
 };
-
-NoiseBenchmark_FastNoise nbFastNoise = {};
