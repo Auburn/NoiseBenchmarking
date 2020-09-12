@@ -29,18 +29,11 @@ add_subdirectory(benchmark)
 add_subdirectory(NoiseBenchmarkInterface)
 include_directories(NoiseBenchmarkInterface)
 
+add_executable(NoiseBenchmarking "main.cpp")
+
 add_subdirectory(FastNoise)
-# add_subdirectory(FastNoise2)
-# add_subdirectory(FastNoiseLite)
+add_subdirectory(FastNoiseLite)
 # add_subdirectory(FastNoiseSIMD)
-
-add_executable(NoiseBenchmarking 
-    "main.cpp")
+# add_subdirectory(FastNoise2)
     
-target_link_libraries(NoiseBenchmarking
-    benchmark::benchmark
-    NoiseBenchmarkInterface
-)
-
-add_dependencies(NoiseBenchmarking
-    BenchFastNoise)
+target_link_libraries(NoiseBenchmarking NoiseBenchmarkInterface)

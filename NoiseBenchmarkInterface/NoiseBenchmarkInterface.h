@@ -11,9 +11,6 @@
 #define DLL_FUNC __declspec(dllimport)
 #endif
 
-DLL_FUNC void RegisterNoiseBenchmarkInterface( class NoiseBenchmarkInterface* );
-DLL_FUNC const std::vector<class NoiseBenchmarkInterface*>& GetNoiseBenchmarkInterfaces();
-
 class NoiseBenchmarkInterface
 {
 public:
@@ -22,9 +19,9 @@ public:
         Value,
         Perlin,
         Simplex,
-        OpenSimplex,
+        OpenSimplex2,
         Cellular,
-        Cubic,
+        ValueCubic,
         EnumMax
     };
 
@@ -48,16 +45,19 @@ protected:
     const char* mName;
 };
 
+DLL_FUNC void RegisterNoiseBenchmark( NoiseBenchmarkInterface* );
+DLL_FUNC const std::vector<NoiseBenchmarkInterface*>& GetRegisteredNoiseBenchmarks();
+
 template<typename CLASS>
-class RegisteredNoiseBenchmarkInterface : public NoiseBenchmarkInterface
+class RegisteredNoiseBenchmark : public NoiseBenchmarkInterface
 {
 public:
-    RegisteredNoiseBenchmarkInterface( const char* name ) : NoiseBenchmarkInterface( name )
+    RegisteredNoiseBenchmark( const char* name ) : NoiseBenchmarkInterface( name )
     {
-        RegisterNoiseBenchmarkInterface( this );
+        RegisterNoiseBenchmark( &Instance );
     }
 
     static CLASS Instance;
 };
 
-template<typename CLASS> CLASS RegisteredNoiseBenchmarkInterface<CLASS>::Instance = {};
+template<typename CLASS> CLASS RegisteredNoiseBenchmark<CLASS>::Instance = {};

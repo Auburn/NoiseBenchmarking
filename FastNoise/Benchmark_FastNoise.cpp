@@ -1,13 +1,10 @@
 #include <NoiseBenchmarkInterface.h>
 #include <FastNoise.h>
 
-class NoiseBenchmark_FastNoise : public RegisteredNoiseBenchmarkInterface<NoiseBenchmark_FastNoise>
+class NoiseBenchmark_FastNoise : public RegisteredNoiseBenchmark<NoiseBenchmark_FastNoise>
 {
 public:
-    NoiseBenchmark_FastNoise() : RegisteredNoiseBenchmarkInterface( "FastNoise" )
-    {
-     //   *(int*)0 = 1;
-    }
+    NoiseBenchmark_FastNoise() : RegisteredNoiseBenchmark( "FastNoise" ) { }
 
     bool SetupNoise( benchmark::State& state, FastNoise& fastnoise, NoiseType noiseType )
     {
@@ -20,7 +17,7 @@ public:
         case NoiseType::Perlin: fastnoise.SetNoiseType( FastNoise::Perlin ); break;
         case NoiseType::Simplex: fastnoise.SetNoiseType( FastNoise::Simplex ); break;
         case NoiseType::Cellular: fastnoise.SetNoiseType( FastNoise::Cellular ); break;
-        case NoiseType::Cubic: fastnoise.SetNoiseType( FastNoise::Cubic ); break;
+        case NoiseType::ValueCubic: fastnoise.SetNoiseType( FastNoise::Cubic ); break;
         default: state.SkipWithError( "NoiseType not supported" ); return false;
         }
         return true;

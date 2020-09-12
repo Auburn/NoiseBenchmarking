@@ -118,13 +118,13 @@ int main( int argc, char** argv )
     int64_t dimensionSize2D = 512;
     int64_t dimensionSize3D = 64;
 
-    for( auto noiseType = (NoiseBenchmarkInterface::NoiseType)0;
-        noiseType < NoiseBenchmarkInterface::NoiseType::EnumMax;
-        noiseType = (NoiseBenchmarkInterface::NoiseType)((int)noiseType + 1) )
+    for( size_t dimensionCount = 2; dimensionCount <= 3; dimensionCount++ )
     {
-        for( size_t dimensionCount = 2; dimensionCount <= 3; dimensionCount++ )
+        for( auto noiseType = (NoiseBenchmarkInterface::NoiseType)0;
+            noiseType < NoiseBenchmarkInterface::NoiseType::EnumMax;
+            noiseType = (NoiseBenchmarkInterface::NoiseType)((int)noiseType + 1) )
         {
-            for( NoiseBenchmarkInterface* noiseBenchmarkInterface : GetNoiseBenchmarkInterfaces() )
+            for( NoiseBenchmarkInterface* noiseBenchmarkInterface : GetRegisteredNoiseBenchmarks() )
             {
                 std::string benchName = noiseBenchmarkInterface->FormatBenchmarkName( noiseType, dimensionCount );
 

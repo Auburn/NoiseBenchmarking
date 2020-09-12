@@ -3,12 +3,12 @@
 
 std::vector<NoiseBenchmarkInterface*> NoiseBenchmarkInterfaces;
 
-void RegisterNoiseBenchmarkInterface( NoiseBenchmarkInterface* p )
+void RegisterNoiseBenchmark( NoiseBenchmarkInterface* p )
 {
     NoiseBenchmarkInterfaces.push_back( p );
 }
 
-const std::vector<class NoiseBenchmarkInterface*>& GetNoiseBenchmarkInterfaces()
+const std::vector<class NoiseBenchmarkInterface*>& GetRegisteredNoiseBenchmarks()
 {
     return NoiseBenchmarkInterfaces;
 }
