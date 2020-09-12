@@ -126,21 +126,27 @@ int main( int argc, char** argv )
         {
             for( NoiseBenchmarkInterface* noiseBenchmarkInterface : GetRegisteredNoiseBenchmarks() )
             {
+                benchmark::internal::Benchmark* benchmark = nullptr;
                 std::string benchName = noiseBenchmarkInterface->FormatBenchmarkName( noiseType, dimensionCount );
 
                 if( dimensionCount == 2 )
                 {
-                    benchmark::RegisterBenchmark( benchName.c_str(), [noiseBenchmarkInterface, noiseType, dimensionSize2D]( benchmark::State& state )
+                    benchmark = benchmark::RegisterBenchmark( benchName.c_str(), [noiseBenchmarkInterface, noiseType, dimensionSize2D]( benchmark::State& state )
                         {
                             noiseBenchmarkInterface->Benchmark2D( state, noiseType, dimensionSize2D );
                         } );
                 }
                 else if( dimensionCount == 3 )
                 {
-                    benchmark::RegisterBenchmark( benchName.c_str(), [noiseBenchmarkInterface, noiseType, dimensionSize3D]( benchmark::State& state )
+                    benchmark = benchmark::RegisterBenchmark( benchName.c_str(), [noiseBenchmarkInterface, noiseType, dimensionSize3D]( benchmark::State& state )
                         {
                             noiseBenchmarkInterface->Benchmark3D( state, noiseType, dimensionSize3D );
                         } );
+                }
+
+                if( benchmark )
+                {
+                    benchmark->DisplayAggregatesOnly()->ReportAggregatesOnly();// ->Repetitions( 5 );
                 }
             }
         }
