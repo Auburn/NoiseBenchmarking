@@ -6,7 +6,7 @@ class NoiseBenchmark_FastNoise : public RegisteredNoiseBenchmark<NoiseBenchmark_
 public:
     NoiseBenchmark_FastNoise() : RegisteredNoiseBenchmark( "FastNoise" ) { }
 
-    bool SetupNoise( benchmark::State& state, FastNoise& fastnoise, NoiseType noiseType )
+    bool SetupNoise( FastNoise& fastnoise, NoiseType noiseType )
     {
         fastnoise.SetCellularReturnType( FastNoise::Distance );
         fastnoise.SetCellularDistanceFunction( FastNoise::Euclidean );
@@ -18,15 +18,21 @@ public:
         case NoiseType::Simplex: fastnoise.SetNoiseType( FastNoise::Simplex ); break;
         case NoiseType::Cellular: fastnoise.SetNoiseType( FastNoise::Cellular ); break;
         case NoiseType::ValueCubic: fastnoise.SetNoiseType( FastNoise::Cubic ); break;
-        default: state.SkipWithError( "NoiseType not supported" ); return false;
+        default: return false;
         }
         return true;
+    }
+
+    bool IsSupported( NoiseType noiseType, size_t dimensionCount ) final
+    {
+        FastNoise fastnoise;
+        return SetupNoise( fastnoise, noiseType );
     }
 
     bool Benchmark2D( benchmark::State& state, NoiseType noiseType, size_t dimensionSize ) final
     {
         FastNoise fastnoise;
-        if( !SetupNoise( state, fastnoise, noiseType ) ) return false;
+        if( !SetupNoise( fastnoise, noiseType ) ) return false;
 
         int64_t itemIncrement = dimensionSize * dimensionSize;
         int64_t itemCount = 0;
@@ -54,9 +60,9 @@ public:
     bool Benchmark3D( benchmark::State& state, NoiseType noiseType, size_t dimensionSize ) final
     {
         FastNoise fastnoise;
-        if( !SetupNoise( state, fastnoise, noiseType ) ) return false;
+        if( !SetupNoise( fastnoise, noiseType ) ) return false;
 
-        int64_t itemIncrement = dimensionSize * dimensionSize;
+        int64_t itemIncrement = dimensionSize * dimensionSize * dimensionSize;
         int64_t itemCount = 0;
 
         for( auto _ : state )

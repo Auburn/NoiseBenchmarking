@@ -6,7 +6,7 @@ class NoiseBenchmark_FastNoiseLite : public RegisteredNoiseBenchmark<NoiseBenchm
 public:
     NoiseBenchmark_FastNoiseLite() : RegisteredNoiseBenchmark( "FastNoiseLite" ) { }
 
-    bool SetupNoise( benchmark::State& state, FastNoiseLite& fastnoise, NoiseType noiseType )
+    bool SetupNoise( FastNoiseLite& fastnoise, NoiseType noiseType )
     {
         fastnoise.SetCellularReturnType( FastNoiseLite::CellularReturnType_Distance );
         fastnoise.SetCellularDistanceFunction( FastNoiseLite::CellularDistanceFunction_Euclidean );
@@ -16,17 +16,24 @@ public:
         case NoiseType::Value: fastnoise.SetNoiseType( FastNoiseLite::NoiseType_Value ); break;
         case NoiseType::Perlin: fastnoise.SetNoiseType( FastNoiseLite::NoiseType_Perlin ); break;
         case NoiseType::OpenSimplex2: fastnoise.SetNoiseType( FastNoiseLite::NoiseType_OpenSimplex2 ); break;
+        case NoiseType::OpenSimplex2S: fastnoise.SetNoiseType( FastNoiseLite::NoiseType_OpenSimplex2S ); break;
         case NoiseType::Cellular: fastnoise.SetNoiseType( FastNoiseLite::NoiseType_Cellular ); break;
         case NoiseType::ValueCubic: fastnoise.SetNoiseType( FastNoiseLite::NoiseType_ValueCubic ); break;
-        default: state.SkipWithError( "NoiseType not supported" ); return false;
+        default: return false;
         }
         return true;
+    }
+
+    bool IsSupported( NoiseType noiseType, size_t dimensionCount ) final
+    {
+        FastNoiseLite fastnoise;
+        return SetupNoise( fastnoise, noiseType );
     }
 
     bool Benchmark2D( benchmark::State& state, NoiseType noiseType, size_t dimensionSize ) final
     {
         FastNoiseLite fastnoise;
-        if( !SetupNoise( state, fastnoise, noiseType ) ) return false;
+        if( !SetupNoise( fastnoise, noiseType ) ) return false;
 
         int64_t itemIncrement = dimensionSize * dimensionSize;
         int64_t itemCount = 0;
@@ -54,9 +61,9 @@ public:
     bool Benchmark3D( benchmark::State& state, NoiseType noiseType, size_t dimensionSize ) final
     {
         FastNoiseLite fastnoise;
-        if( !SetupNoise( state, fastnoise, noiseType ) ) return false;
+        if( !SetupNoise( fastnoise, noiseType ) ) return false;
 
-        int64_t itemIncrement = dimensionSize * dimensionSize;
+        int64_t itemIncrement = dimensionSize * dimensionSize * dimensionSize;
         int64_t itemCount = 0;
 
         for( auto _ : state )

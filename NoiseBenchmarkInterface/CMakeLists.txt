@@ -4,3 +4,5 @@ add_library(NoiseBenchmarkInterface SHARED
     
 target_link_libraries(NoiseBenchmarkInterface PUBLIC
     benchmark::benchmark)
+
+target_include_directories(NoiseBenchmarkInterface PUBLIC .)

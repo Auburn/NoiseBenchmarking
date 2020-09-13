@@ -126,6 +126,11 @@ int main( int argc, char** argv )
         {
             for( NoiseBenchmarkInterface* noiseBenchmarkInterface : GetRegisteredNoiseBenchmarks() )
             {
+                if( !noiseBenchmarkInterface->IsSupported( noiseType, dimensionCount ) )
+                {
+                    continue;
+                }
+
                 benchmark::internal::Benchmark* benchmark = nullptr;
                 std::string benchName = noiseBenchmarkInterface->FormatBenchmarkName( noiseType, dimensionCount );
 

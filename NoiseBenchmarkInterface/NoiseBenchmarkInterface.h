@@ -20,6 +20,7 @@ public:
         Perlin,
         Simplex,
         OpenSimplex2,
+        OpenSimplex2S,
         Cellular,
         ValueCubic,
         EnumMax
@@ -36,6 +37,8 @@ public:
 
         return benchName;
     }
+
+    virtual bool IsSupported( NoiseType noiseType, size_t dimensionCount ) = 0;
 
     virtual bool Benchmark2D( benchmark::State& state, NoiseType noiseType, size_t dimensionSize ) = 0;
     virtual bool Benchmark3D( benchmark::State& state, NoiseType noiseType, size_t dimensionSize ) = 0;
