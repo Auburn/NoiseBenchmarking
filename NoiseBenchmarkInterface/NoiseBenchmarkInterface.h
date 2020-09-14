@@ -28,11 +28,12 @@ public:
 
     std::string FormatBenchmarkName( NoiseType noiseType, size_t dimensionCount )
     {
-        std::string benchName = magic_enum::enum_name( noiseType ).data();
+        std::string benchName;
 
-        benchName += '_';
         benchName += std::to_string( dimensionCount );
         benchName += "D_";
+        benchName += magic_enum::enum_name( noiseType ).data();
+        benchName += '_';
         benchName += mName;
 
         return benchName;

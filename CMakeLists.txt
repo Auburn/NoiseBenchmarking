@@ -32,7 +32,7 @@ add_executable(NoiseBenchmarking "main.cpp")
 
 add_subdirectory(FastNoise)
 add_subdirectory(FastNoiseLite)
-# add_subdirectory(FastNoiseSIMD)
+add_subdirectory(FastNoiseSIMD)
 add_subdirectory(FastNoise2)
     
 target_link_libraries(NoiseBenchmarking NoiseBenchmarkInterface)
