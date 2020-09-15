@@ -2,14 +2,17 @@
 #include <NoiseBenchmarkInterface.h>
 #include <FastNoiseSIMD/FastNoiseSIMD.h>
 
-class NoiseBenchmark_FastNoiseSIMD : public RegisteredNoiseBenchmark<NoiseBenchmark_FastNoiseSIMD>
+template<int LEVEL>
+class NoiseBenchmark_FastNoiseSIMD : public RegisteredNoiseBenchmark<NoiseBenchmark_FastNoiseSIMD<LEVEL>>
 {
 public:
-    NoiseBenchmark_FastNoiseSIMD() : RegisteredNoiseBenchmark( "FastNoiseSIMD" ) {}
+    NoiseBenchmark_FastNoiseSIMD() : RegisteredNoiseBenchmark<NoiseBenchmark_FastNoiseSIMD<LEVEL>>( "FastNoiseSIMD" ) {}
+
+    using NoiseType = NoiseBenchmarkInterface::NoiseType;
 
     bool SetupNoise( std::unique_ptr<FastNoiseSIMD>& fastnoise, NoiseType noiseType )
     {
-        FastNoiseSIMD::SetSIMDLevel( -1 );
+        FastNoiseSIMD::SetSIMDLevel( LEVEL );
 
         fastnoise.reset( FastNoiseSIMD::NewFastNoiseSIMD() );
 
@@ -67,3 +70,7 @@ public:
         return true;
     }
 };
+
+//template class NoiseBenchmark_FastNoiseSIMD<2>; // SSE4.1
+template class NoiseBenchmark_FastNoiseSIMD<3>; // AVX2
+//template class NoiseBenchmark_FastNoiseSIMD<4>; // AVX512

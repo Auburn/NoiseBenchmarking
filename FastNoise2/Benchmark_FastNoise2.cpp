@@ -84,6 +84,6 @@ public:
     }
 };
 
-template class NoiseBenchmark_FastNoise2<FastSIMD::Level_SSE41>;
+//template class NoiseBenchmark_FastNoise2<FastSIMD::Level_SSE41>;
 template class NoiseBenchmark_FastNoise2<FastSIMD::Level_AVX2>;
-template class NoiseBenchmark_FastNoise2<FastSIMD::Level_AVX512>;
+//template class NoiseBenchmark_FastNoise2<FastSIMD::Level_AVX512>;
