@@ -5,7 +5,7 @@
 class NoiseBenchmark_FastNoiseSIMD : public RegisteredNoiseBenchmark<NoiseBenchmark_FastNoiseSIMD>
 {
 public:
-    NoiseBenchmark_FastNoiseSIMD() : RegisteredNoiseBenchmark( "FastNoiseSIMD" ) { }
+    NoiseBenchmark_FastNoiseSIMD() : RegisteredNoiseBenchmark( "FastNoiseSIMD" ) {}
 
     bool SetupNoise( std::unique_ptr<FastNoiseSIMD>& fastnoise, NoiseType noiseType )
     {

@@ -1,19 +1,23 @@
 #include <NoiseBenchmarkInterface.h>
 #include <FastNoise/FastNoise.h>
 
-class NoiseBenchmark_FastNoise2 : public RegisteredNoiseBenchmark<NoiseBenchmark_FastNoise2>
+template<FastSIMD::eLevel LEVEL>
+class NoiseBenchmark_FastNoise2 : public RegisteredNoiseBenchmark<NoiseBenchmark_FastNoise2<LEVEL>>
 {
 public:
-    NoiseBenchmark_FastNoise2() : RegisteredNoiseBenchmark( "FastNoise2" ) { }
+    NoiseBenchmark_FastNoise2() : RegisteredNoiseBenchmark<NoiseBenchmark_FastNoise2<LEVEL>>( "FastNoise2" ) {}
+
+    using NoiseType = NoiseBenchmarkInterface::NoiseType;
 
     bool SetupNoise( FastNoise::SmartNode<>& fastnoise, NoiseType noiseType )
     {
-        FastSIMD::eLevel testSIMD = FastSIMD::Level_Null;
+        FastSIMD::eLevel testSIMD = LEVEL;
 
         switch( noiseType )
         {
         case NoiseType::Value: fastnoise = FastNoise::New<FastNoise::Value>( testSIMD ); break;
         case NoiseType::Perlin: fastnoise = FastNoise::New<FastNoise::Perlin>( testSIMD ); break;
+        case NoiseType::Simplex: fastnoise = FastNoise::New<FastNoise::Simplex>( testSIMD ); break;
         case NoiseType::OpenSimplex2: fastnoise = FastNoise::New<FastNoise::OpenSimplex2>( testSIMD ); break;
         //case NoiseType::OpenSimplex2S: FastNoise::New<FastNoise::Value>(testSIMD) break;
         case NoiseType::Cellular: fastnoise = FastNoise::New<FastNoise::CellularDistance>( testSIMD ); break;
@@ -79,3 +83,7 @@ public:
         return true;
     }
 };
+
+template class NoiseBenchmark_FastNoise2<FastSIMD::Level_SSE41>;
+template class NoiseBenchmark_FastNoise2<FastSIMD::Level_AVX2>;
+template class NoiseBenchmark_FastNoise2<FastSIMD::Level_AVX512>;

@@ -4,7 +4,7 @@
 class NoiseBenchmark_FastNoise : public RegisteredNoiseBenchmark<NoiseBenchmark_FastNoise>
 {
 public:
-    NoiseBenchmark_FastNoise() : RegisteredNoiseBenchmark( "FastNoise" ) { }
+    NoiseBenchmark_FastNoise() : RegisteredNoiseBenchmark( "FastNoise" ) {}
 
     bool SetupNoise( FastNoise& fastnoise, NoiseType noiseType )
     {

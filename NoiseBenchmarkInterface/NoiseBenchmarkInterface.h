@@ -45,7 +45,9 @@ public:
     virtual bool Benchmark3D( benchmark::State& state, NoiseType noiseType, size_t dimensionSize ) = 0;
 
 protected:
-    NoiseBenchmarkInterface( const char* name ) : mName( name ) { }
+    NoiseBenchmarkInterface( const char* name ) : mName( name ) {}
+    virtual ~NoiseBenchmarkInterface() = default;
+
     const char* mName;
 };
 
@@ -55,7 +57,7 @@ DLL_FUNC const std::vector<NoiseBenchmarkInterface*>& GetRegisteredNoiseBenchmar
 template<typename CLASS>
 class RegisteredNoiseBenchmark : public NoiseBenchmarkInterface
 {
-public:
+protected:
     RegisteredNoiseBenchmark( const char* name ) : NoiseBenchmarkInterface( name )
     {
         RegisterNoiseBenchmark( &Instance );
