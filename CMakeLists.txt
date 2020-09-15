@@ -35,5 +35,6 @@ add_subdirectory(FastNoiseLite)
 add_subdirectory(FastNoiseSIMD)
 add_subdirectory(FastNoise2)
 add_subdirectory(libnoise)
+add_subdirectory(stb_perlin)
     
 target_link_libraries(NoiseBenchmarking NoiseBenchmarkInterface)

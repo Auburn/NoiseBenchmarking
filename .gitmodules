@@ -17,3 +17,6 @@
 [submodule "libnoise/libnoise"]
 	path = libnoise/libnoise
 	url = https://github.com/qknight/libnoise.git
+[submodule "stb_perlin/stb"]
+	path = stb_perlin/stb
+	url = https://github.com/nothings/stb.git
