@@ -10,7 +10,7 @@ public:
 
     bool IsSupported( NoiseType noiseType, size_t dimensionCount ) final
     {
-        return noiseType == NoiseType::Perlin;
+        return noiseType == NoiseType::Perlin && dimensionCount == 3;
     }
 
     bool Benchmark2D( benchmark::State& state, NoiseType noiseType, size_t dimensionSize ) final
